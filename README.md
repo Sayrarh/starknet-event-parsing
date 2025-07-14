@@ -7,7 +7,7 @@ A simple TypeScript example demonstrating how to parse events from Starknet smar
 ### 1. Clone the Repository
 ```bash
 git clone "https://github.com/Sayrarh/starknet-event-parsing.git"
-cd starknet-event-parser
+cd starknet-event-parsing
 ```
 
 ### 2. Install Dependencies
