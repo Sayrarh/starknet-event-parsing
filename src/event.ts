@@ -1,34 +1,44 @@
-import { RpcProvider } from "starknet";
+import { Account, RpcProvider, Contract, ParsedEvent } from "starknet";
+import * as util from "util";
+import * as dotenv from "dotenv";
+dotenv.config();
 
-async function filterTransferEvents() {
+async function eventLogic() {
   const provider = new RpcProvider({
     nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_8",
   });
 
-  const contractAddress = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
-  const transferSelector = "0x99cd8bde557814842a3121e8ddfd433a539b8c9f14bf31ebf108d12e6196e9";
+  const accountAddress = process.env.ACCOUNT_ADDRESS!;
+  const privateKey = process.env.PK!;
 
-  // Filter for Transfer events (small range)
-  const events = await provider.getEvents({
-    address: contractAddress,
-    keys: [[transferSelector]], // Only Transfer events
-    from_block: { block_number: 8000 }, // Small range
-    to_block: { block_number: 9000 },   // Only 1000 blocks
-    chunk_size: 100
-  });
+  const account = new Account(provider, accountAddress, privateKey);
 
-  console.log(`Found ${events.events.length} Transfer events`);
+  const contractAddress =
+    "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 
-  // Display each Transfer event
-  events.events.forEach((event, index) => {
-    console.log(`\n--- Transfer Event ${index + 1} ---`);
-    console.log("From:", event.keys[1]);
-    console.log("To:", event.keys[2]);
-    console.log("Amount (hex):", event.data[0]);
-    console.log("Amount (decimal):", parseInt(event.data[0], 16));
-    console.log("Block:", event.block_number);
-    console.log("Transaction:", event.transaction_hash);
-  });
+  const { abi } = await provider.getClassAt(contractAddress);
+
+  if (abi === undefined) {
+    throw new Error("ABI not found");
+  }
+
+  const contract = new Contract(abi, contractAddress, provider);
+  //Connect contract with account
+  contract.connect(account);
+
+  const { transaction_hash: txHash } = await contract.invoke("transfer", [accountAddress, 1]);
+  const receipt = await provider.waitForTransaction(txHash);
+
+  if (receipt.isSuccess()) {
+    console.log("Transaction successful!");
+    console.log("Parsed events:");
+
+    const listEvents = contract.parseEvents(receipt);
+
+    listEvents.forEach((event: ParsedEvent) => {
+      console.log(util.inspect(event, false, null, true));
+    });
+  }
 }
 
-filterTransferEvents();
+eventLogic();
