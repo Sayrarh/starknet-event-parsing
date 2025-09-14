@@ -4,8 +4,10 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 async function eventLogic() {
+  const alchemyApiKey = process.env.ALCHEMY_API_KEY;
+
   const provider = new RpcProvider({
-    nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_8",
+    nodeUrl: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_8/${alchemyApiKey}`,
   });
 
   const accountAddress = process.env.ACCOUNT_ADDRESS!;

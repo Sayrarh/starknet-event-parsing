@@ -27,10 +27,11 @@ Create a `.env` file in the root directory:
 ```env
 ACCOUNT_ADDRESS=0x...
 PK=0x..
+ALCHEMY_API_KEY=
 ```
 
 
-Replace with your actual account address and private key
+Replace with your actual account address, private key, and API key from Alchemy[https://dashboard.alchemy.com/].
 
 ### 5. Configure Contract Details
 
@@ -121,18 +122,18 @@ await eventLogic(
 ### Network
 Currently configured for **Starknet Sepolia Testnet**:
 ```typescript
-nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_8"
+nodeUrl: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_8/{apiKey}`
 ```
 
 To use mainnet, change to:
 ```typescript
-nodeUrl: "https://starknet-mainnet.public.blastapi.io/rpc/v0_8"
+nodeUrl: `https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_8/{apiKey}`
 ```
 
 ### Account Setup
 - Use Braavos, ArgentX, or any Starknet wallet
 - Export your account details
-- Fund your testnet account from [Starknet Faucet](https://starknet-faucet.vercel.app/)
+- Fund your testnet account from [Starknet Faucet](http://faucet.starknet.io/)
 
 
 ### Troubleshooting
