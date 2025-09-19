@@ -9,7 +9,8 @@ async function eventLogic() {
   const provider = new RpcProvider({
     nodeUrl: `https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_8/${alchemyApiKey}`,
   });
-
+  
+  const recipientAddress = "0x0207d7324a20d6A080C7EF6237D289fD57F4fb11187A64f597d4099a720FE6C5";
   const accountAddress = process.env.ACCOUNT_ADDRESS!;
   const privateKey = process.env.PK!;
 
@@ -28,7 +29,7 @@ async function eventLogic() {
   //Connect contract with account
   contract.connect(account);
 
-  const { transaction_hash: txHash } = await contract.invoke("transfer", [accountAddress, 1]);
+  const { transaction_hash: txHash } = await contract.invoke("transfer", [recipientAddress, 1]);
   const receipt = await provider.waitForTransaction(txHash);
 
   if (receipt.isSuccess()) {
